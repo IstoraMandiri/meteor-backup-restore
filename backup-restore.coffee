@@ -1,22 +1,46 @@
-### BACKUP
+fs   = Npm.require('fs')
+exec = Npm.require('child_process').exec
+mongodbUri = Npm.require('mongodb-uri')
+targz = Npm.require('tar.gz')
+temp = Npm.require('temp')
 
-# a meteor method call
+# use `temp` to cleanup mongodump and mongorestore
+temp.track()
 
-# security check
+# get database connection information from process
+dbConn = mongodbUri.parse(process.env.MONGO_URL)
 
-# eval mongorestore
+Meteor.backup = (callback) ->
+  # create temp dir and file
+  temp.mkdir {}, (err, tempDir) ->
+    callback err if err?
+    temp.open {suffix: '.tgz'}, (err, tempFile) ->
+      callback err if err?
+      # build and execute mongorestore command
+      port = dbConn.hosts[0].port
+      host = dbConn.hosts[0].host
+      database = dbConn.database
+      outPath = tempDir
+      command = "mongodump --db #{database} --host #{host} --port #{port} --out #{outPath}"
+      exec command, (err, res)  ->
+        # zip it
+        new targz().compress tempDir, tempFile.path, (err) ->
+          callback err if err?
+          callback null, tempFile.path
 
-# create temp file for output
-
-# ensure file is zipped
-
-# send file using http
-
-
+Meteor.restore = (callback) ->
+  # receive  uploaded file
+  # unzip it to temp folder
+  # run mongorestore
+  console.log 'restoring...'
 
 
-### RESTORE
+Meteor.methods
+  'backup' : ->
+    Meteor.backup (err, file) ->
+      # send it off to the client over http, rename the file?
+      console.log 'sending to client:', file
+      console.log 'tbc'
 
-# file upload endpoint
-
-# unzip in temp and eval mongorestore
+  'restore' : ->
+    Meteor.restore()

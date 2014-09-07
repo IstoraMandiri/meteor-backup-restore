@@ -1,0 +1,61 @@
+{
+  "dependencies": {
+    "mongodb-uri": {
+      "version": "0.9.7"
+    },
+    "tar.gz": {
+      "version": "0.1.1",
+      "dependencies": {
+        "fstream": {
+          "version": "0.1.31",
+          "dependencies": {
+            "graceful-fs": {
+              "version": "3.0.2"
+            },
+            "inherits": {
+              "version": "2.0.1"
+            },
+            "mkdirp": {
+              "version": "0.5.0",
+              "dependencies": {
+                "minimist": {
+                  "version": "0.0.8"
+                }
+              }
+            },
+            "rimraf": {
+              "version": "2.2.8"
+            }
+          }
+        },
+        "tar": {
+          "version": "0.1.20",
+          "dependencies": {
+            "block-stream": {
+              "version": "0.0.7"
+            },
+            "inherits": {
+              "version": "2.0.1"
+            }
+          }
+        },
+        "commander": {
+          "version": "1.1.1",
+          "dependencies": {
+            "keypress": {
+              "version": "0.1.0"
+            }
+          }
+        }
+      }
+    },
+    "temp": {
+      "version": "0.8.1",
+      "dependencies": {
+        "rimraf": {
+          "version": "2.2.8"
+        }
+      }
+    }
+  }
+}
