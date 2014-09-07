@@ -1,7 +1,7 @@
 Package.describe({
   summary: "A basic backup solution using mongodump and monogorestore",
-  version: "0.0.0"
-  // git: ""
+  version: "0.0.0",
+  git: "https://github.com/hitchcott/meteor-backup-restore"
 });
 
 Npm.depends({
