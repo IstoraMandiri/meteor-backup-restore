@@ -3,9 +3,15 @@
 
 `$ meteor add hitchcott:backup-restore`
 
-This package currently supports Meteor >=0.9, and is experimental. 
+This package supports Meteor >=0.9, and is experimental. 
 
-**Important: Do not add this package to production apps**, right now it is 100% insecure. This package contains methods that directly manipulate your database which are compelteley accessible to any clients.
+#### Important: On it's own, this package is very insecure
+
+This package contains methods that directly manipulate your database, which can be used by *any* clients out of the box. 
+
+Please secure your methods with a package such as [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks). Check out the [security](#security) section for more information.
+
+**Be sure you know what is going on before using this in production. Always use it at your own risk.**
 
 ## What is it?
 
@@ -49,10 +55,20 @@ This package should work out of the box with the above client methods. If you wa
 
 Check `backup-restore.coffee` for more information.
 
+## Security
+
+You shouldn't use this pacakge for anything other than prototyping without securing the methods on the server side. To do so, you could use the [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks) package. For example:
+
+```coffeescript
+Meteor.beforeMethods ['uploadBackup', 'downloadBackup'], ->
+  Meteor.users.findOne(@userId)?.admin
+```
+
+The above will mean that only users with the `admin` field attached to their user can perform backups and restores. You'll nead to tweak this to suit your application.
+
 ## Todo
 
-* Add Method Security. I'll probably use [method-hooks](https://github.com/hitchcott/meteor-method-hooks/) once it's updated to 0.9.
-* Direct upload of tar instead of client-side reading - I believe this will be required larger backup files
+* Direct upload of tar instead of client-side reading. I believe this will be required larger backup files.
 * *Maybe* collectionfs integration (both for serving backup/restore files and backing up local filesystem files)
 * Better docs
 * Tests
