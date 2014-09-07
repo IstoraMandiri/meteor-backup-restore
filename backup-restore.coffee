@@ -46,8 +46,8 @@ Meteor.parseMongoDump = (tmpRestoreFile, callback) ->
   temp.mkdir {}, (err, tempDir) ->
     # extract the contents of the upload
     new targz().extract tmpRestoreFile, tempDir, (e, location) ->
-      # build and execute mongorestore
-      restoreCommand = "mongorestore --drop --db #{database} --host #{host} --port #{port} #{tempDir}/#{database}"
+      # perfrom mongorstore with --drop
+      restoreCommand = "mongorestore --drop --db #{database} --host #{host} --port #{port} #{tempDir}/#{database};"
       exec restoreCommand, (err, res)  ->
         callback(err, res) if callback?
 
@@ -61,11 +61,12 @@ Meteor.methods
 
    'uploadBackup': (fileData) ->
       # save the uploaded file
-      tmpRestoreFile = temp.path()
-      fs.writeFile tmpRestoreFile, fileData, 'binary', (err,done) ->
-        Meteor.parseMongoDump tmpRestoreFile
-      return null
-
+      complete = do Meteor._wrapAsync (done) ->
+        tmpRestoreFile = temp.path()
+        fs.writeFile tmpRestoreFile, fileData, 'binary', ->
+          Meteor.parseMongoDump tmpRestoreFile, ->
+            done null, true
+      return complete
 
 
 
