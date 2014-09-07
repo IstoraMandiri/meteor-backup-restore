@@ -13,6 +13,10 @@ Npm.depends({
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@0.9.1');
+
   api.use(['coffeescript','webapp','routepolicy'],'server');
   api.addFiles('backup-restore.coffee', 'server');
+
+  api.use(['coffeescript'],'client');
+  api.addFiles('upload-backup.coffee','client')
 });

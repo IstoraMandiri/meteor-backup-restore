@@ -13,6 +13,9 @@ temp.track()
 
 # get database connection information from process
 dbConn = mongodbUri.parse(process.env.MONGO_URL)
+port = dbConn.hosts[0].port
+host = dbConn.hosts[0].host
+database = dbConn.database
 
 # static files temp
 RoutePolicy.declare staticEndpoint, "network"
@@ -22,42 +25,52 @@ filePrefix = ->
   now = new Date()
   "meteor-mongodump-#{now.getFullYear()}-#{now.getMonth()+1}-#{now.getDate()}-"
 
-Meteor.backup = (callback) ->
+Meteor.generateMongoDump = (callback) ->
   # create temp dir and file
   temp.mkdir {}, (err, tempDir) ->
     callback err if err?
     tempFile = temp.path
       dir: staticDir
       prefix: filePrefix()
-      suffix: ".tgz"
-    # build and execute mongorestore command
-    port = dbConn.hosts[0].port
-    host = dbConn.hosts[0].host
-    database = dbConn.database
+      suffix: ".tar.gz"
+    # build and execute mongodumo
     outPath = tempDir
-    command = "mongodump --db #{database} --host #{host} --port #{port} --out #{outPath}"
-    exec command, (err, res)  ->
+    dumpCommand = "mongodump --db #{database} --host #{host} --port #{port} --out #{outPath}"
+    exec dumpCommand, (err, res)  ->
       # zip it
-      new targz().compress tempDir, tempFile, (err) ->
-        if err?
-          callback err
-        else
+      new targz().compress "#{tempDir}/#{database}", tempFile, (err) ->
+        callback err, tempFile
 
-          callback null, tempFile
-
-Meteor.restore = (callback) ->
-  # receive  uploaded file
-  # unzip it to temp folder
-  # run mongorestore
-  console.log 'restoring...'
+Meteor.parseMongoDump = (tmpRestoreFile, callback) ->
+  # make a temp directory for mongorestore target
+  temp.mkdir {}, (err, tempDir) ->
+    # extract the contents of the upload
+    new targz().extract tmpRestoreFile, tempDir, (e, location) ->
+      # build and execute mongorestore
+      restoreCommand = "mongorestore --drop --db #{database} --host #{host} --port #{port} #{tempDir}/#{database}"
+      exec restoreCommand, (err, res)  ->
+        callback(err, res) if callback?
 
 
 Meteor.methods
-  'backup' : ->
-    filePath = do Meteor._wrapAsync(Meteor.backup)
+  'downloadBackup' : ->
+    filePath = do Meteor._wrapAsync(Meteor.generateMongoDump)
     filePathArr = filePath.split('/')
     file = filePathArr[filePathArr.length - 1]
     return "#{staticEndpoint}/#{file}"
 
-  'restore' : ->
-    Meteor.restore()
+   'uploadBackup': (fileData) ->
+      # save the uploaded file
+      tmpRestoreFile = temp.path()
+      fs.writeFile tmpRestoreFile, fileData, 'binary', (err,done) ->
+        Meteor.parseMongoDump tmpRestoreFile
+      return null
+
+
+
+
+
+
+
+
+
