@@ -1,6 +1,6 @@
 Package.describe({
-  summary: "Datbase backup using mongorestore",
-  version: "1.0.0"
+  summary: "A basic backup solution using mongodump and monogorestore",
+  version: "0.0.0"
   // git: ""
 });
 
