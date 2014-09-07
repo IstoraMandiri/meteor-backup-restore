@@ -7,11 +7,12 @@ Package.describe({
 Npm.depends({
   "temp": "0.8.1",
   "mongodb-uri": "0.9.7",
-  "tar.gz": "0.1.1"
+  "tar.gz": "0.1.1",
+  "connect": "2.7.10"
 });
 
 Package.onUse(function(api) {
   api.versionsFrom('METEOR@0.9.1');
-  api.use('coffeescript','server');
+  api.use(['coffeescript','webapp','routepolicy'],'server');
   api.addFiles('backup-restore.coffee', 'server');
 });
