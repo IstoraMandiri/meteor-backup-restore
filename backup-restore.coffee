@@ -59,14 +59,14 @@ Meteor.methods
     file = filePathArr[filePathArr.length - 1]
     return "#{staticEndpoint}/#{file}"
 
-   'uploadBackup': (fileData) ->
-      # save the uploaded file
-      complete = do Meteor._wrapAsync (done) ->
-        tmpRestoreFile = temp.path()
-        fs.writeFile tmpRestoreFile, fileData, 'binary', ->
-          Meteor.parseMongoDump tmpRestoreFile, ->
-            done null, true
-      return complete
+  'uploadBackup': (fileData) ->
+    # save the uploaded file
+    complete = do Meteor._wrapAsync (done) ->
+      tmpRestoreFile = temp.path()
+      fs.writeFile tmpRestoreFile, fileData, 'binary', ->
+        Meteor.parseMongoDump tmpRestoreFile, ->
+          done null, true
+    return complete
 
 
 
