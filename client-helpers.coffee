@@ -4,3 +4,7 @@ Meteor.uploadBackup = (blob, callback) ->
     Meteor.call "uploadBackup", file.srcElement.result, ->
       callback() if callback?
   fileReader.readAsBinaryString blob
+
+Meteor.downloadBackup = ->
+  Meteor.call 'downloadBackup', (e, data) ->
+    window.location = data

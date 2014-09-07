@@ -18,5 +18,5 @@ Package.onUse(function(api) {
   api.addFiles('backup-restore.coffee', 'server');
 
   api.use(['coffeescript'],'client');
-  api.addFiles('upload-backup.coffee','client')
+  api.addFiles('client-helpers.coffee','client')
 });
