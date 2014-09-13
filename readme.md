@@ -5,13 +5,15 @@
 
 This package supports Meteor >=0.9, and is experimental. 
 
-#### Important: On it's own, this package is very insecure
+#### Important: Don't use this package right now for anyhting other than prototyping. It's completely insecure.
 
-This package contains methods that directly manipulate your database, which can be used by *any* clients out of the box. 
+This package contains methods that directly manipulate your database, which can be used by *any* clients out of the box.
 
-Please secure your methods with a package such as [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks). Check out the [security](#security) section for more information.
+For now, don't use it at all because temp isnt working.
 
-**Be sure you know what is going on before using this in production. Always use it at your own risk.**
+If you use this for anything other than prototyping, please secure your methods with a package such as [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks). Check out the [security](#security) section for more information.
+
+**Please be sure to understand what this package does before using it in production.**
 
 ## What is it?
 
@@ -24,9 +26,13 @@ This provides a simple way of creating backups and restoring your application's 
 
 A common use case might be to copy your development database over to meteor.com after deploying it (untested), or simply keeping an backup archive of app instances.
 
+If you are using [`collectionfs`](https://github.com/CollectionFS/Meteor-CollectionFS), with `cfs:gridfs` any stored files (such as images) will also be included in the backup file.
+
 ## Client API
 
 There are two client helpers:
+
+**Meteor.downloadBackup** will call the `downloadBackup` method, have the server generate a mongodump, tarball it, create a http endpoint, and automatically redirecting the user to the download link when it is ready.
 
 ```coffeescript
 Template.myTemplate.events
@@ -34,15 +40,13 @@ Template.myTemplate.events
     Meteor.downloadBackup()
 ```
 
-**Meteor.downloadBackup** will call the `downloadBackup` method, have the server generate a mongodump, tarball it, create a http endpoint, and automatically redirecting the user to the download link when it is ready.
+**Metoer.uploadBackup** accepts a file object. It reads that file as a binary blob in the browser, and sends it to an `uploadBackup` method. Once server-side, the tarball is extracted and is used with `mongorestore`, which will drop the current database and replace it with the uploaded data.
     
 ```coffeescript
   'change #upload-backup': (e) ->
      Meteor.uploadBackup e.currentTarget.files[0], ->
         alert 'backup complete!'
 ```
-
-**Metoer.uploadBackup** accepts a file object. It reads that file as a binary blob in the browser, and sends it to an `uploadBackup` method. Once server-side, the tarball is extracted and is used with `mongorestore`, which will drop the current database and replace it with the uploaded data.
 
 ## Server API
 
@@ -57,19 +61,25 @@ Check `backup-restore.coffee` for more information.
 
 ## Security
 
-You shouldn't use this pacakge for anything other than prototyping without securing the methods on the server side. To do so, you could use the [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks) package. For example:
+You shouldn't use this pacakge for anything other than prototyping without securing the methods on the server side. 
+
+To do so, you could use the [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks) package. 
+
+For example:
 
 ```coffeescript
 Meteor.beforeMethods ['uploadBackup', 'downloadBackup'], ->
   Meteor.users.findOne(@userId)?.admin
 ```
 
-The above will mean that only users with the `admin` field attached to their user can perform backups and restores. You'll nead to tweak this to suit your application.
+The above will ensure that only users with the `admin` field attached to their user (server side mongo) object can perform backups and restores.
 
-## Todo
+## Todos (PRs welcome)
 
-* Direct upload of tar instead of client-side reading. I believe this will be required larger backup files.
-* *Maybe* collectionfs integration (both for serving backup/restore files and backing up local filesystem files)
+* Direct upload of tar via HTTP instead of using `FileReader` on client (I believe this will be required larger backup files).
+* Deeper collectionfs integration 
+	* serving backup/restore files
+	* backing up local filesystem files
 * Better docs
 * Tests
 
