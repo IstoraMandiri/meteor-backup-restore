@@ -1,9 +1,11 @@
 # Meteor Backup-Restore
 ### A basic backup solution using `mongodump` and `monogorestore`
 
+This package supports Meteor >=0.9, and is experimental. 
+
 `$ meteor add hitchcott:backup-restore`
 
-This package supports Meteor >=0.9, and is experimental. 
+You can also use `meteor add hitchcott:backup-restore-ui` and access the `{{> backupRestoreControls}}` template.
 
 #### ⚠️ For now, don't use this package for anything other than prototyping.
 
