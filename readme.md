@@ -3,9 +3,11 @@
 
 This package supports Meteor >=0.9, and is experimental. 
 
-`$ meteor add hitchcott:backup-restore`
+To install, use `meteor add hitchcott:backup-restore`
 
-You can also use `meteor add hitchcott:backup-restore-ui` and access the `{{> backupRestoreControls}}` template.
+You can also use  `meteor add hitchcott:backup-restore-ui` 
+
+to access the  `{{> backupRestoreControls}}` template.
 
 #### ⚠️ For now, don't use this package for anything other than prototyping.
 
