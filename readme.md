@@ -1,15 +1,13 @@
-# Meteor backup-restore
-### A basic backup solution using mongodump and monogorestore
+# Meteor Backup-Restore
+### A basic backup solution using `mongodump` and `monogorestore`
 
 `$ meteor add hitchcott:backup-restore`
 
 This package supports Meteor >=0.9, and is experimental. 
 
-#### Important: Don't use this package right now for anyhting other than prototyping. It's completely insecure.
+#### ⚠️ Don't use this package *out of the box* for anything other than prototyping.
 
 This package contains methods that directly manipulate your database, which can be used by *any* clients out of the box.
-
-For now, don't use it at all because temp isnt working.
 
 If you use this for anything other than prototyping, please secure your methods with a package such as [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks). Check out the [security](#security) section for more information.
 
@@ -76,6 +74,7 @@ The above will ensure that only users with the `admin` field attached to their u
 
 ## Todos (PRs welcome)
 
+* Make TEMP_LIFETIME configurable. Currently fixed at 30 mins.
 * Direct upload of tar via HTTP instead of using `FileReader` on client (I believe this will be required larger backup files).
 * Deeper collectionfs integration 
 	* serving backup/restore files

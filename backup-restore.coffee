@@ -5,11 +5,10 @@ targz = Npm.require('tar.gz')
 connect = Npm.require("connect")
 temp = Npm.require('temp')
 
+TEMP_LIFETIME = 1 * 60 * 60 * 1000 # 1 hour
+
 staticDir = process.env.PWD + "/.meteor/local/backuprestore_tmp"
 staticEndpoint = "/download-backup"
-
-# use `temp` to cleanup
-temp.track()
 
 # get database connection information from process
 dbConn = mongodbUri.parse(process.env.MONGO_URL)
@@ -57,6 +56,10 @@ Meteor.methods
     filePath = do Meteor._wrapAsync(Meteor.generateMongoDump)
     filePathArr = filePath.split('/')
     file = filePathArr[filePathArr.length - 1]
+    Meteor.setTimeout ->
+      # delete the temporary file
+      fs.unlinkSync filePath
+    , TEMP_LIFETIME
     return "#{staticEndpoint}/#{file}"
 
   'uploadBackup': (fileData) ->
@@ -68,6 +71,32 @@ Meteor.methods
           done null, true
     return complete
 
+
+
+# recursive remove
+rmDir = (dirPath) ->
+  try
+    files = fs.readdirSync(dirPath)
+  catch e
+    return
+  if files.length > 0
+    i = 0
+
+    while i < files.length
+      filePath = dirPath + "/" + files[i]
+      if fs.statSync(filePath).isFile()
+        fs.unlinkSync filePath
+      else
+        rmDir filePath
+      i++
+  fs.rmdirSync dirPath
+  return
+
+
+# clean up tmp dir on startup
+Meteor.startup ->
+  rmDir staticDir
+  fs.mkdirSync staticDir
 
 
 
