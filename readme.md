@@ -5,11 +5,13 @@
 
 This package supports Meteor >=0.9, and is experimental. 
 
-#### ⚠️ Don't use this package *out of the box* for anything other than prototyping.
+#### ⚠️ For now, don't use this package for anything other than prototyping.
 
-This package contains methods that directly manipulate your database, which can be used by *any* clients out of the box.
+Currently, backup files are deleted 1 hour after they are generated and can be accessed by anyone with the download link until then. A more secure mechanism will be implemented shortly.
 
-If you use this for anything other than prototyping, please secure your methods with a package such as [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks). Check out the [security](#security) section for more information.
+This package also contains methods that directly manipulate your database, which can be used by *any* clients out of the box.
+
+Please secure your methods with a package such as [hitchcott:method-hooks](https://github.com/hitchcott/meteor-method-hooks). Check out the [security](#security) section for more information.
 
 **Please be sure to understand what this package does before using it in production.**
 
@@ -32,14 +34,18 @@ There are two client helpers:
 
 **Meteor.downloadBackup** will call the `downloadBackup` method, have the server generate a mongodump, tarball it, create a http endpoint, and automatically redirecting the user to the download link when it is ready.
 
+It wraps `Meteor.call('downloadBackup')`
+
 ```coffeescript
 Template.myTemplate.events
   'click #download-backup' : ->
     Meteor.downloadBackup()
 ```
 
-**Metoer.uploadBackup** accepts a file object. It reads that file as a binary blob in the browser, and sends it to an `uploadBackup` method. Once server-side, the tarball is extracted and is used with `mongorestore`, which will drop the current database and replace it with the uploaded data.
-    
+**Meteor.uploadBackup** accepts a file object. It reads that file as a binary blob in the browser, and sends it to an `uploadBackup` method. Once server-side, the tarball is extracted and is used with `mongorestore`, which will drop the current database and replace it with the uploaded data.
+
+It wraps `Meteor.call('uploadBackup')`
+
 ```coffeescript
   'change #upload-backup': (e) ->
      Meteor.uploadBackup e.currentTarget.files[0], ->
@@ -52,8 +58,6 @@ This package should work out of the box with the above client methods. If you wa
 
 * `Meteor.generateMongoDump`
 * `Meteor.parseMongoDump`
-* Meteor method `downloadBackup`
-* Meteor method `uploadBackup`
 
 Check `backup-restore.coffee` for more information.
 
@@ -74,7 +78,8 @@ The above will ensure that only users with the `admin` field attached to their u
 
 ## Todos (PRs welcome)
 
-* Make TEMP_LIFETIME configurable. Currently fixed at 30 mins.
+* Make download route more secure
+* Make TEMP_LIFETIME configurable
 * Direct upload of tar via HTTP instead of using `FileReader` on client (I believe this will be required larger backup files).
 * Deeper collectionfs integration 
 	* serving backup/restore files
