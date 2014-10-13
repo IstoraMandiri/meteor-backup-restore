@@ -10,6 +10,7 @@ You can also use  `meteor add hitchcott:backup-restore-ui`
 to access the  `{{> backupRestoreControls}}` template.
 
 #### ⚠️ For now, don't use this package for anything other than prototyping.
+##### This package currently does not work with deployed projects.
 
 Currently, backup files are deleted 1 hour after they are generated and can be accessed by anyone with the download link until then. A more secure mechanism will be implemented shortly.
 
@@ -27,8 +28,6 @@ This package has two functions:
 * **Restore**: Allows aforementioned tarball to be uploaded and restored using `mongorestore`
 
 This provides a simple way of creating backups and restoring your application's database without having to use the mongodb command line tools manually.
-
-A common use case might be to copy your development database over to meteor.com after deploying it (untested), or simply keeping an backup archive of app instances.
 
 If you are using [`collectionfs`](https://github.com/CollectionFS/Meteor-CollectionFS), with `cfs:gridfs` any stored files (such as images) will also be included in the backup file.
 
