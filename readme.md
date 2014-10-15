@@ -10,7 +10,8 @@ You can also use  `meteor add hitchcott:backup-restore-ui`
 to access the  `{{> backupRestoreControls}}` template.
 
 #### ⚠️ For now, don't use this package for anything other than prototyping.
-##### This package currently does not work with deployed projects.
+
+This package currently does not work with projects deployed to meteor.com, as `mongodump` is disabled on those servers.
 
 Currently, backup files are deleted 1 hour after they are generated and can be accessed by anyone with the download link until then. A more secure mechanism will be implemented shortly.
 
