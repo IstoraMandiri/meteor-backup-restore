@@ -1,3 +1,7 @@
+### :heavy_exclamation_mark: Package Depreciated
+#### Please try out [`hitchcott:app-dump`](https://github.com/hitchcott/app-dump/) instead
+
+
 # Meteor Backup-Restore
 ### A basic backup solution using `mongodump` and `monogorestore`
 
